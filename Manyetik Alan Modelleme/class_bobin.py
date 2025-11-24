@@ -7,6 +7,7 @@ Created on Mon Nov 10 17:55:03 2025
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import special
+from matplotlib import cm
 
 
 Mu0=4*np.pi*1e-7 # Boşluğun manyetik geçirgenliği 
@@ -21,6 +22,7 @@ class bobin:
         self.I=i;
         self.N=n; 
         self.z0=z0; 
+        self.dl= self.a/100
         
     def get_magnetic_field_un_rotated(self,x,y,z):        
         rho2=x**2+y**2;
@@ -30,9 +32,9 @@ class bobin:
         rho=np.sqrt(rho2)
         r=np.sqrt(r2)
         
-        alpha2=self.a**2+r2-2*self.a*rho
-        beta2=self.a**2+r2+2*self.a*rho
-        k2=1-((alpha2**2)/(beta2))
+        alpha2=a2+r2-2*self.a*rho
+        beta2=a2+r2+2*self.a*rho
+        k2=1-((alpha2)/(beta2))
         gamma=x**2-y**2 
         C=Mu0*self.I*self.N/np.pi 
         
@@ -44,24 +46,137 @@ class bobin:
         
         
         
+        
         if rho<self.dl:
             bz=Mu0*self.I*self.N*a2/(2*(a2+z**2)**(3/2))
+            bx=0.0; 
+            by=0.0;
         else: 
-            bz=D*((self.a**2-r2)*E_k2+alpha2*K_k2)
+            bz=D*((a2-r2)*E_k2+alpha2*K_k2)
         
         if np.abs(x)<self.dl:
             bx=3*Mu0*self.I*self.N*a2*x*z/(4*(a2+z**2)**(5/2))
         else: 
-            bx=D*(x*z/rho2)*((self.a**2+r2)*E_k2-alpha2*K_k2)
+            bx=D*(x*z/rho2)*((a2+r2)*E_k2-alpha2*K_k2)
         
         if np.abs(y)<self.dl:
             by=3*Mu0*self.I*self.N*a2*y*z/(4*(a2+z**2)**(5/2))
         else: 
-            by=D*(y*z/rho2)*((self.a**2+r2)*E_k2-alpha2*K_k2)
-        
+            by=D*(y*z/rho2)*((a2+r2)*E_k2-alpha2*K_k2)
+    
         
         bm=np.sqrt(bx**2+by**2+bz**2)
         B=[bx,by,bz,bm]
         return B
 
    
+
+
+
+
+
+######## ÇİZİM FONKSİYONLARI 
+def plot_list_points_with_length(figNo,subNo,plotList,legend=[],title=None,figsize =(8, 7)):
+    level=500;
+    fig = plt.figure(figNo,figsize)
+    ax = fig.add_subplot(subNo) #♦  projection='3d'
+    
+    for newData in plotList:
+        x,y,color,line_lenght=newData
+        if color==None:
+            color=get_random_color()
+        
+        ax.plot(x, y,color,linewidth=line_lenght)
+    if not legend==[]:
+        ax.legend(legend)
+    
+    if not title==None:
+        ax.set_xlabel('x')
+        ax.set_ylabel('Y')
+        ax.set_title(title)
+        
+def plot_list_points(figNo,subNo,plotList,legend=[],title=None,figsize =(8, 7)):
+    level=500;
+    fig = plt.figure(figNo,figsize)
+    ax = fig.add_subplot(subNo) #♦  projection='3d'
+    
+    for newData in plotList:
+        x,y,color=newData
+        if color==None:
+            color=get_random_color()
+        
+        ax.plot(x, y,color)
+    if not legend==[]:
+        ax.legend(legend)
+    
+    if not title==None:
+        ax.set_xlabel('x')
+        ax.set_ylabel('Y')
+        ax.set_title(title)
+
+def plot_points(figNo,subNo,X,Y,color=None,title=None,figsize =(8, 7)):
+    level=500;
+    fig = plt.figure(figNo,figsize)
+    ax = fig.add_subplot(subNo) #♦  projection='3d'
+    if color==None:
+        ax.plot(X, Y)
+    else: 
+        ax.plot(X, Y,color)
+    if not title==None:
+        ax.set_xlabel('x')
+        ax.set_ylabel('Y')
+        ax.set_title(title)  
+        
+def plot_surf_3D(figNo,subNo,X,Y,Z,title):
+    # bir veri grubu için yüzey çizimini yapar 
+    level=30;
+    fig = plt.figure(figNo,figsize =(8, 7))
+    ax = fig.add_subplot(subNo,projection='3d') #♦  projection='3d' 
+    levels = np.linspace(-1, 1, level)
+    # surf=ax.contourf(X, Y, Z, rstride=1, cstride=1, cmap='autumn',
+    #     linewidth=0, antialiased=False)
+    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_title(title)
+    
+def plot_surf_2D(figNo,subNo,X,Y,Z,title):
+    # bir veri grubu için yüzey çizimini yapar 
+    level=30;
+    fig = plt.figure(figNo,figsize =(8, 7))
+    ax = fig.add_subplot(subNo) #♦  projection='3d' 
+    levels = np.linspace(-0.1, 0.1, level)
+    surf=ax.contourf(X, Y, Z, cmap='autumn', antialiased=False)
+    #surf=ax.contourf(X, Y, Z,[-0.1 -0.05 0.0 0.05 0.1])
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_title(title)
+
+def plot_stream_lines(figNo,subNo,X2D,Y2D,Z2Dx,Z2Dy,title='stream line',Type='linewith',par=0):
+    #get_ipython().run_line_magic('matplotlib', 'inline')
+    Z=np.sqrt(Z2Dx**2+Z2Dy**2)
+    #fig = plt.figure(figsize =(8, 7))
+    fig = plt.figure(figNo,figsize =(8, 7))
+    ax = fig.add_subplot(subNo) #♦  projection='3d' 
+    if Type=='linewith':
+        if par==0:
+            lw = 5*Z / Z.max()
+            strm = ax.streamplot(X2D, Y2D, Z2Dx, Z2Dy, color = Z,
+                                  linewidth = lw, cmap ='autumn')
+        else:
+            strm = ax.streamplot(X2D, Y2D, Z2Dx, Z2Dy, color = Z,
+                                  linewidth = 2, cmap ='autumn')
+    elif Type=='density':
+        if par==0:
+            par=[0.1, 0.9]
+        strm = ax.streamplot(X2D, Y2D, Z2Dx, Z2Dy, color = Z,
+                              density=par, cmap ='autumn')
+    fig.colorbar(strm.lines)
+    plt.tight_layout() # show plot
+    plt.xlabel('X');    plt.ylabel('Y'); plt.title(title)
+    plt.show();  
+        

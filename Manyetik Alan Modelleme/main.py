@@ -11,7 +11,7 @@ from class_bobin import *
 
 
 # Bobin özellikleri 
-a=25/1000; # bobin yarıçapı (m) 
+a=100/1000; # bobin yarıçapı (m) 
 N=100 # Bobin sargı sayısı  
 I=1 # Akım (A)
 
@@ -23,11 +23,15 @@ J=0.0001 # Dönme atalet momenti
 
 bobin1=bobin(a,i=10)
 
+
 #p=np.array([0],[0][0]) 
 x=0; y=0.1; z=0.1;
 
 b=bobin1.get_magnetic_field_un_rotated(x, y, z)
 
+
+"""
+# 1 boyutta manyetik alan 
 Y=np.linspace(-2*a, 2*a,20)
 #B=np.zeros_like(Y)
 B=np.zeros([len(Y),4])
@@ -42,4 +46,24 @@ ax.plot(Y, B[:,3],'-k')
 #ax.set(xlim=(-10, 10), xlabel="t")
 ax.legend(fontsize=14)
 plt.show()
-    
+"""
+x=0.0
+n=50;  m=1*n; 
+L=3*a; W=L;
+y=np.linspace(-L,L,n)
+z=np.linspace(-W,W,m)
+
+Y2D,Z2D=np.meshgrid(y,z)
+
+B2D=np.zeros([m,n,4])
+#B=np.zeros([X2D.shape[0],X2D.shape[1],4])
+
+for j in range(m):
+    for i in range(n):
+        b=bobin1.get_magnetic_field_un_rotated(x,Y2D[j,i], Z2D[j,i])
+        B2D[j,i,:]=b[:]
+
+
+plot_surf_2D(2,121,Y2D,Z2D,B2D[:,:,3],'B')
+
+plot_stream_lines(2,122,Y2D,Z2D,B2D[:,:,1],B2D[:,:,2],title='stream line')
