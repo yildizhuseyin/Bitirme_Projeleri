@@ -17,14 +17,38 @@ def ahmet(ad):
     
 class bobin: 
     dl=1e-4
-    def __init__(self,a,i=1,n=1,z0=0):
+    def __init__(self,a,i=1,n=1,z0=0, alfa=0.0):
         self.a=a; 
         self.I=i;
         self.N=n; 
         self.z0=z0; 
         self.dl= self.a/100
+        self.alfa=alfa
         
-    def get_magnetic_field_un_rotated(self,x,y,z):        
+    def edit_rotation(self,alfa):
+        self.alfa=alfa
+        
+    def get_Rotx(self,aci):
+        R=np.array([[1.0,0.0,0.0],
+                    [0.0,np.cos(aci*np.pi/180.0),-np.sin(aci*np.pi/180.0)],
+                    [0.0,np.sin(aci*np.pi/180.0),np.cos(aci*np.pi/180.0)]])
+        return R
+
+    def get_magnetic_field_rotated(self,x,y,z):
+        Rg=self.get_Rotx(-self.alfa);
+        Ri=self.get_Rotx(self.alfa);
+        r=np.array([x,y,z])
+        r_=np.dot( Rg, r)
+        bb_=self.get_magnetic_field_unrotated(r_[0],r_[1],r_[2])
+        b_=np.reshape(bb_[0:3],[-1,])
+        bb=np.dot( Ri, b_)
+        bm=np.sqrt(bb[0]**2+bb[1]**2+bb[2]**2)
+        b=[bb[0],bb[1],bb[2],bm]
+        return b
+        
+    
+    def get_magnetic_field_unrotated(self,x,y,z):  
+        z=z-self.z0
         rho2=x**2+y**2;
         r2=x**2+y**2+z**2
         a2=self.a**2
