@@ -35,16 +35,17 @@ class bobin:
         return R
 
     def get_magnetic_field_rotated(self,x,y,z):
+        
         Rg=self.get_Rotx(-self.alfa);
         Ri=self.get_Rotx(self.alfa);
-        r=np.array([x,y,z])
-        r_=np.dot( Rg, r)
-        bb_=self.get_magnetic_field_unrotated(r_[0],r_[1],r_[2])
-        b_=np.reshape(bb_[0:3],[-1,])
-        bb=np.dot( Ri, b_)
+        r=np.array([[x],[y],[z]])
+        r_=np.dot(Rg,r)
+        bb_=self.get_magnetic_field_unrotated(r_[0,0],r_[1,0],r_[2,0])
+        b_=np.reshape(bb_[0:3],[-1,1])
+        bb=np.dot(Ri, b_)
         bm=np.sqrt(bb[0]**2+bb[1]**2+bb[2]**2)
         b=[bb[0],bb[1],bb[2],bm]
-        return b
+        return np.reshape(b,[-1,])
         
     
     def get_magnetic_field_unrotated(self,x,y,z):  
@@ -78,15 +79,15 @@ class bobin:
         else: 
             bz=D*((a2-r2)*E_k2+alpha2*K_k2)
         
-        if np.abs(x)<self.dl:
-            bx=3*Mu0*self.I*self.N*a2*x*z/(4*(a2+z**2)**(5/2))
-        else: 
-            bx=D*(x*z/rho2)*((a2+r2)*E_k2-alpha2*K_k2)
-        
-        if np.abs(y)<self.dl:
-            by=3*Mu0*self.I*self.N*a2*y*z/(4*(a2+z**2)**(5/2))
-        else: 
-            by=D*(y*z/rho2)*((a2+r2)*E_k2-alpha2*K_k2)
+            if np.abs(x)<self.dl:
+                bx=3*Mu0*self.I*self.N*a2*x*z/(4*(a2+z**2)**(5/2))
+            else: 
+                bx=D*(x*z/rho2)*((a2+r2)*E_k2-alpha2*K_k2)
+            
+            if np.abs(y)<self.dl:
+                by=3*Mu0*self.I*self.N*a2*y*z/(4*(a2+z**2)**(5/2))
+            else: 
+                by=D*(y*z/rho2)*((a2+r2)*E_k2-alpha2*K_k2)
     
         
         bm=np.sqrt(bx**2+by**2+bz**2)
@@ -203,4 +204,14 @@ def plot_stream_lines(figNo,subNo,X2D,Y2D,Z2Dx,Z2Dy,title='stream line',Type='li
     plt.tight_layout() # show plot
     plt.xlabel('X');    plt.ylabel('Y'); plt.title(title)
     plt.show();  
-        
+
+def plot_vector_2D(figNo,subNo,X,Y,U,V,scale=1,title='vector'):
+    # bir veri grubu için yüzey çizimini yapar 
+    level=30;
+    fig = plt.figure(figNo,figsize =(8, 7))
+    ax = fig.add_subplot(subNo) #♦  projection='3d' 
+    ax.quiver(X, Y, U, V, color='b', units='xy', scale=scale)
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_title(title)
+    

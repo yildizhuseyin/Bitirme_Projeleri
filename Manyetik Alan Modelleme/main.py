@@ -22,7 +22,7 @@ J=0.0001 # Dönme atalet momenti
 
 bobin0=bobin(a,i=10)
 bobin1=bobin(a,i=10,z0=a/2)
-bobin2=bobin(a,i=10,z0=a/2,alfa=45)
+bobin2=bobin(a,i=10,z0=a/2,alfa=90.0)
 
 
 #p=np.array([0],[0][0]) 
@@ -69,8 +69,10 @@ for j in range(m):
         B2D_2[j,i,:]=b_2[:]
 
 
-plot_surf_2D(2,121,Y2D,Z2D,B2D[:,:,3],'B')
-plot_stream_lines(2,122,Y2D,Z2D,B2D[:,:,1],B2D[:,:,2],title='stream line')
-
-plot_surf_2D(3,121,Y2D,Z2D,B2D_2[:,:,3],'B')
-plot_stream_lines(3,122,Y2D,Z2D,B2D_2[:,:,1],B2D[:,:,2],title='stream line')
+plot_surf_2D(2,131,Y2D,Z2D,B2D[:,:,3],'B')
+plot_stream_lines(2,132,Y2D,Z2D,B2D[:,:,1],B2D[:,:,2],title='stream line')
+plot_vector_2D(2,133,Y2D,Z2D,B2D[:,:,1],B2D[:,:,2],scale=1e-2,title='vector')
+    
+plot_surf_2D(3,131,Y2D,Z2D,B2D_2[:,:,3],'B')
+plot_stream_lines(3,132,Y2D,Z2D,B2D_2[:,:,1],B2D_2[:,:,2],title='stream line')
+plot_vector_2D(3,133,Y2D,Z2D,B2D_2[:,:,1],B2D_2[:,:,2],scale=1e-2,title='vector')
