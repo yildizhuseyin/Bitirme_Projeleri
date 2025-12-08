@@ -27,8 +27,10 @@ class bobin:
         
     def edit_rotation(self,alfa):
         self.alfa=alfa
+    def set_current(self,i):
+        self.I=i 
         
-    def get_Rotx(self,aci):
+    def get_Rotx(self,aci):# Derece 
         R=np.array([[1.0,0.0,0.0],
                     [0.0,np.cos(aci*np.pi/180.0),-np.sin(aci*np.pi/180.0)],
                     [0.0,np.sin(aci*np.pi/180.0),np.cos(aci*np.pi/180.0)]])
@@ -69,9 +71,6 @@ class bobin:
         E_k2=special.ellipe(k2)
         K_k2=special.ellipk(k2)
         
-        
-        
-        
         if rho<self.dl:
             bz=Mu0*self.I*self.N*a2/(2*(a2+z**2)**(3/2))
             bx=0.0; 
@@ -101,6 +100,11 @@ class bobin:
 
 
 ######## ÇİZİM FONKSİYONLARI 
+def get_random_color():
+    r=np.random.random([3,])
+    rnd_color=(r[0], r[1], r[2])
+    return rnd_color
+
 def plot_list_points_with_length(figNo,subNo,plotList,legend=[],title=None,figsize =(8, 7)):
     level=500;
     fig = plt.figure(figNo,figsize)
