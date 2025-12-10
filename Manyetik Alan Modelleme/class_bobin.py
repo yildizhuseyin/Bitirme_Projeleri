@@ -27,6 +27,7 @@ class bobin:
         
     def edit_rotation(self,alfa):
         self.alfa=alfa
+        
     def set_current(self,i):
         self.I=i 
         
