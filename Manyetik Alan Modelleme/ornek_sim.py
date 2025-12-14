@@ -51,7 +51,7 @@ def get_force(X):
     #print(B_a)
     return force
 
-def dF(t,X,F):
+def dF(t,X):
     # T=m x B
     # F=m . (Nabla B) 
     df=np.zeros_like(X)
@@ -62,37 +62,27 @@ def dF(t,X,F):
 
 
 t0=0; ts=1; dt=0.0001
-
 n=int((ts-t0)/dt)
 t=0
 X=np.array([[z0],[dz0]]) #[z,dz]
-SIM=simulator(t0,ts,dt,X,sim_type='euler')
-SIM.set_fcn(dF)
-
-SIM2=simulator(t0,ts,dt,X,sim_type='euler')
-SIM2.set_fcn(dF)
-
-SIM3=simulator(t0,ts,dt,X,sim_type='RK4')
-SIM3.set_fcn(dF)
-
 Data=np.zeros([n,3])
 for i in range(n):
-    SIM.apply()
-    SIM2.apply()
-    SIM3.apply()
-    Data[i,:]=[SIM.t,SIM.X[0,0],SIM.X[1,0]]
+    # e=a/10-X[0,0]
+    # I=e*25
+    # print(I)
+    # bobin.set_current(I)
+    
+    # dX=dF(t,X)  # Euler yönteminde türev 
+    K1=dF(t,X)
+    K2=dF(t+dt/2,X+K1*dt/2)
+    K3=dF(t+dt/2,X+K2*dt/2)
+    K4=dF(t+dt,X+K3*dt)
+    dX=(1/6)*(K1+2*K2+2*K3+K4) # Runge Kutta İçin 
+    X=X+dX*dt
+    Data[i,:]=[t,X[0,0],X[1,0]]
+    t=t+dt
     
 
+plt.plot(Data[:,0],Data[:,1])
 
 
-# SIM2.run()
-
-
-# SIM3.run()
-
-
-plt.plot(SIM2.log_T[:,0],SIM2.log_X[:,0])
-
-plot_list_points_with_length(1,111,[(Data[:,0],Data[:,1],'-r',2),
-                                    (SIM2.log_T[:,0],SIM2.log_X[:,0],':k',1),
-                                    (SIM3.log_T[:,0],SIM3.log_X[:,0],'--g',1)],legend=['RK4','Eu','RK4a'],title='Başlık')
