@@ -23,7 +23,7 @@ bobin=bobin(a,i=I,z0=a/5,n=N)
 
 m0=0.4 # mıknatısın manyetik dipol (A*m2)
 M=0.0001 # Ağırlık (kg) 
-g=0*9.81 
+g=1*9.81 
 b= 0.001 # sürtünme kuvveti 
 z0=0.0;
 dz0=0.0;
@@ -60,6 +60,8 @@ def dF(t,X,F):
     return df
 
 
+# %%
+
 
 t0=0; ts=1; dt=0.001
 
@@ -75,7 +77,7 @@ SIM.set_fcn(dF)
 
 # %% KONTROLCÜ AYARLARI 
 PID_controller=PID_controller_1D(dt,y_ref=a/10) # ♠kontrolcüyü tanımla 
-PID_controller.set_parameters(kp=10) # PID parametrelerini düzenle 
+PID_controller.set_parameters(kp=700) # PID parametrelerini düzenle 
 
 
 
@@ -95,14 +97,14 @@ while running:
     control_current=PID_controller.apply(SIM.X[0,0]) # Kontrolcüden uygulanacak akımı hesaplat 
     # print(control_current)
     bobin.set_current(control_current)
-    magnetic_field,force,torque=get_force(SIM.X) # Manyetik alanları hesapla 
     SIM.apply() # Simulasyonu çalıştır 
     
     x=[0.0,0.0,SIM.X[0]]
     v=[0.0,0.0,SIM.X[1]]
     
     robot.update_position(x,v)
-    if SIM.adim % 2==0:
+    if SIM.adim % 1==0:    
+        magnetic_field,force,torque=get_force(SIM.X) # Manyetik alanları hesapla 
         running=ekran.draw(n=SIM.adim,t=SIM.get_time(),B=magnetic_field,F=force,T=torque) # Ekranı güncelle 
         #print(SIM.adim,SIM.get_time())
     timer.sleep(dt)
