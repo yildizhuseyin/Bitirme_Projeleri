@@ -95,12 +95,13 @@ say=0
 t0=timer.time()
 while running:
     control_current=PID_controller.apply(SIM.X[0,0]) # Kontrolcüden uygulanacak akımı hesaplat 
+    control_current=4;
     # print(control_current)
     bobin.set_current(control_current)
     SIM.apply() # Simulasyonu çalıştır 
     
-    x=[0.0,0.0,SIM.X[0]]
-    v=[0.0,0.0,SIM.X[1]]
+    x=[0.0,0.0,SIM.X[0,0]]
+    v=[0.0,0.0,SIM.X[1,0]]
     
     robot.update_position(x,v)
     if SIM.adim % 1==0:    

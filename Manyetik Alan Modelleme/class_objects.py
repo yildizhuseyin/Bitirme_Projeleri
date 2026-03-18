@@ -9,29 +9,37 @@ import pygame
 import random
 import math 
 
+def get_Rotx(aci):# Derece 
+    R=np.array([[1.0,0.0,0.0],
+                [0.0,np.cos(aci*np.pi/180.0),-np.sin(aci*np.pi/180.0)],
+                [0.0,np.sin(aci*np.pi/180.0),np.cos(aci*np.pi/180.0)]])
+    return R
+
 class micro_robot_1D:
     
     def __init__(self,M,m0,X=[0.0,0.0,0.0],V=[0.0,0.0,0.0],Q=[0.0,0.0,0.0],W=[0.0,0.0,0.0]):#pos=[x,y,z]
         self.M=M
         self.m0=m0
-        self.X=np.array(X)
-        self.V=np.array(V)
-        self.Q=np.array(Q)
-        self.W=np.array(W)
+        self.X=np.array(X) # m
+        self.V=np.array(V) # m/s 
+        self.Q=np.array(Q) # Radian 
+        self.W=np.array(W) # Radian / s
         self.color=(random.randrange(0, 255, 2),random.randrange(0, 255, 2),random.randrange(0, 255, 2))
         self.size=5/1000
         
+    
+    
     def set_color(self,color):
         self.color=color
     def set_size(self,size):
         self.size=size
     
-    def update_position(self,x,v):
-        self.X=x
-        self.V=v
-    def update_rotation(self,q,w):
-        self.Q=q
-        self.W=w
+    def update_position(self,x,v): # m olarak güncellenecek 
+        self.X=np.array(x)
+        self.V=np.array(v)
+    def update_rotation(self,q,w): # Radian olarak güncellenecek 
+        self.Q=np.array(q)
+        self.W=np.array(w)
         
         
         
@@ -80,7 +88,7 @@ class pygame_screan_2D:
         self.surface = pygame.Surface((self.width, self.height))
         self.font = pygame.font.SysFont('Arial', 14)
         self.keys = pygame.key.get_pressed()
-        self.text_size=15
+        self.text_size=13
         
     
         pygame.display.set_caption(title)
@@ -124,7 +132,7 @@ class pygame_screan_2D:
         str_time="t: "+str(t)
         str_B="B: "+str(np.round(B,5))
         str_F="F: "+str(np.round(F,5))
-        str_T="T: "+str(np.round(T,5))
+        str_T="T: "+str(np.round(T,7))
         self.draw_transparent_text(self.screen,str_n,(850,10),self.DARK_GRAY) 
         self.draw_transparent_text(self.screen,str_time,(950,10),self.DARK_GRAY)
         self.draw_transparent_text(self.screen,str_B,(850,50),self.BLUE)
@@ -312,15 +320,27 @@ class pygame_screan_2D:
             y=self.zero_point[1]-robo.X[2]*self.scale[1]
             line_length = 100*robo.m0
             angle=robo.Q[0]*180/np.pi
-            start_point=pygame.Vector2(x-0.5*line_length*math.sin(angle),y+0.5*line_length*math.cos(angle))
+            # start_point=pygame.Vector2(x-0.5*line_length*math.sin(angle),y+0.5*line_length*math.cos(angle))
+            start_point=pygame.Vector2(x,y)
             robo_pos = pygame.Vector2(x,y)
             pygame.draw.circle(self.screen, robo.color, robo_pos, robo.size*self.scale[0])
             #self.draw_line(self.RED,robo_pos,robo.m0*10,+90,1)#☺robo.Q[0]
+            
             self.draw_vector( #Çizgi çiz 
                 self.screen, 
                 self.GREEN, 
                 start_point, 
                 line_length, 
-                angle+90, 
+                -angle+90, 
                 size=4
             )
+            str_X="X: "+str(np.round(robo.X,4))
+            str_V="V: "+str(np.round(robo.V,4))
+            str_Q="Q: "+str(np.round(robo.Q*180/np.pi,4))
+            str_W="W: "+str(np.round(robo.W*180/np.pi,4))
+            self.draw_transparent_text(self.screen,str("ROBOT"),(850,200),self.RED)
+
+            self.draw_transparent_text(self.screen,str_X,(850,230),self.RED)
+            self.draw_transparent_text(self.screen,str_V,(850,260),self.RED)
+            self.draw_transparent_text(self.screen,str_Q,(850,290),self.RED)
+            self.draw_transparent_text(self.screen,str_W,(850,320),self.RED)
