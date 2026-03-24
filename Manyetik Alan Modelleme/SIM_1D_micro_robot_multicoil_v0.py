@@ -19,7 +19,9 @@ I=3.0 # Akım (A)
 
 bobin1=bobin(a/1,i=I,z0=a,n=N)
 bobin2=bobin(a/1,i=I,z0=-a,n=N)
-
+coils=[]
+coils.append(bobin1)
+coils.append(bobin2)
 # %%  Robot Ayarları ve Tanımlama 
 
 m0=0.124 # mıknatısın manyetik dipol (A*m2)
