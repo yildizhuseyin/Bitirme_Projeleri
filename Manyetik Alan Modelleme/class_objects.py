@@ -41,6 +41,12 @@ class micro_robot_1D:
         self.Q=np.array(q)
         self.W=np.array(w)
         
+    def get_magnet_vector(self):
+        magnet_vector=np.zeros([3,])
+        magnet_vector[1]=self.m0*np.sin(self.Q[0])
+        magnet_vector[2]=self.m0*np.cos(self.Q[0])
+        return magnet_vector
+        
         
         
         
@@ -111,7 +117,7 @@ class pygame_screan_2D:
         self.coils.append(coil)
         self.coil_count=len(self.coils)
     
-    def draw(self,n=0,t=0,B=[],F=[],T=[]):
+    def draw(self,n=0,t=0,B=[],F=[],T=[],P=[]):
         running = True
         self.screen.fill(self.background_color)
         # self.screen.fill("purple")
@@ -119,6 +125,7 @@ class pygame_screan_2D:
         title_surf = self.font.render(self.title, True, self.WHITE)
         self.surface.blit(title_surf, (5, 5))
         
+
         # koordinat Çizgileri (0V)
         # mid_y = self.height / 2
         # pygame.draw.line(self.surface, self.GRAY, (0, mid_y), (self.width, mid_y), 1)
@@ -133,11 +140,19 @@ class pygame_screan_2D:
         str_B="B: "+str(np.round(B,5))
         str_F="F: "+str(np.round(F,5))
         str_T="T: "+str(np.round(T,7))
+        str_RefP="P_ref: "+str(np.round(P,4)*1000)
         self.draw_transparent_text(self.screen,str_n,(850,10),self.DARK_GRAY) 
         self.draw_transparent_text(self.screen,str_time,(950,10),self.DARK_GRAY)
         self.draw_transparent_text(self.screen,str_B,(850,50),self.BLUE)
         self.draw_transparent_text(self.screen,str_F,(850,80),self.RED)
         self.draw_transparent_text(self.screen,str_T,(850,110),self.RED)
+        
+        if not P==[]:
+            x=self.zero_point[0]+P[1]*self.scale[0] 
+            y=self.zero_point[1]-P[2]*self.scale[1]
+            pygame.draw.circle(self.screen, self.DARK_GRAY, (x,y), 6)
+            self.draw_transparent_text(self.screen,str_RefP,(850,140),self.DARK_GRAY)
+            
         self.draw_coordinates()
         self.draw_coils()
         self.draw_robots() ## Robotları çiz 
@@ -289,10 +304,13 @@ class pygame_screan_2D:
             )
         
     def draw_coils(self):
+        say=0
+        self.draw_transparent_text(self.screen,"COİLS",(850,420),self.BLUE)
         for coil in self.coils:
+            say=say+1
             x=self.zero_point[0]+coil.pos[1]*self.scale[0] 
             y=self.zero_point[1]-coil.pos[2]*self.scale[1]
-            line_length = 1000*coil.a
+            line_length = 10000*coil.a
             angle=coil.alfa
             start_point=pygame.Vector2(x-0.5*line_length*math.cos(angle),y-0.5*line_length*math.sin(angle))
             coil_pos = pygame.Vector2(x,y)
@@ -312,6 +330,10 @@ class pygame_screan_2D:
                 angle, 
                 size=2
                 )
+            str_I="coil_ "+str(say)+" : "+str(np.round(coil.I,4))+" A"
+            
+            self.draw_transparent_text(self.screen,str_I,(850,420+say*30),self.BLUE)
+            
     def draw_robots(self):
         # Çizgi ayarları
         
@@ -334,9 +356,9 @@ class pygame_screan_2D:
                 -angle+90, 
                 size=4
             )
-            str_X="X: "+str(np.round(robo.X,4))
-            str_V="V: "+str(np.round(robo.V,4))
-            str_Q="Q: "+str(np.round(robo.Q*180/np.pi,4))
+            str_X="X: "+str(np.round(robo.X*1000,4))+" mm"
+            str_V="V: "+str(np.round(robo.V*1000,4))
+            str_Q="Q: "+str(np.round(robo.Q*180/np.pi,4))+" Drc"
             str_W="W: "+str(np.round(robo.W*180/np.pi,4))
             self.draw_transparent_text(self.screen,str("ROBOT"),(850,200),self.RED)
 

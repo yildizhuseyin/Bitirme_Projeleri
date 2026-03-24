@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Dec  8 16:34:38 2025
+Tek bobin ile motor dönme simulasyonu
 
 @author: pc64x
 """
@@ -29,12 +29,20 @@ g=1*9.81
 b= 0.001 # sürtünme kuvveti 
 z0=0.0;
 dz0=0.0;
-Q0=30*np.pi/180;
-dQ0=0*np.pi/180;
+q0=30*np.pi/180;
+dq0=0*np.pi/180;
+
+
 robot=micro_robot_1D(M,m0) 
 robo_color=(250,0,0)   
 robot.set_color(robo_color)
 robot.set_size(0.75/1000)
+x=[0.0,0.0,z0]
+v=[0.0,0.0,dz0]
+robot.update_position(x,v)
+q=[q0,0.0,0]
+w=[dq0,0.0,0]
+robot.update_rotation(q,w)
 # %%
 
 
@@ -77,7 +85,7 @@ t0=0; ts=100; dt=0.01
 
 n=int((ts-t0)/dt)
 t=0
-X=np.array([[Q0],[dQ0]]) #[z,dz]
+X=np.array([[q0],[dq0]]) #[z,dz]
 
 SIM=simulator(t0,ts,dt,X,sim_type='RK4')
 SIM.set_fcn(dF)

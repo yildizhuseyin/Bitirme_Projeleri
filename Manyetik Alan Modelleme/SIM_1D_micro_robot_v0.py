@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Dec  8 16:34:38 2025
+Tek bobinle 1D micro robot hareketi ve simulasyonu 
 
 @author: pc64x
 """
@@ -27,16 +27,32 @@ g=1*9.81
 b= 0.001 # sürtünme kuvveti 
 z0=0.0;
 dz0=0.0;
+q0=30.0*np.pi/180;
+dq0=0.0*np.pi/180;
+
 robot=micro_robot_1D(M,m0) 
 robo_color=(250,0,0)   
 robot.set_color(robo_color)
 robot.set_size(0.75/1000)
+x=[0.0,0.0,z0]
+v=[0.0,0.0,dz0]
+robot.update_position(x,v)
+q=[q0,0.0,0]
+w=[dq0,0.0,0]
+robot.update_rotation(q,w)
 # %%
 
+def get_magnet_vector(mm,tet):
+    magnet_vector=np.zeros([3,])
+    magnet_vector[1]=mm*np.sin(tet)
+    magnet_vector[2]=mm*np.cos(tet)
+    return magnet_vector
+    
 
 # Simulasyon ayarları 
-
 def get_force(X):
+    #m=robot.get_magnet_vector()
+    m=get_magnet_vector(m0,robot.Q[0])
     d_z=1e-3
     z0=X[0,0]
     z0a=X[0,0]-d_z
@@ -46,9 +62,10 @@ def get_force(X):
     B_b=bobin.get_magnetic_field_rotated(0.0,0.0,z0b)
     dBz_dz=(B_b[2]-B_a[2])/(2*d_z)
     force=m0*dBz_dz
-    torqe=0
+    BB=np.reshape(B[:3],[-1,])
+    torqe=np.cross(m, BB)
     #print(B_a)
-    return B,force,torqe
+    return B,force,torqe[0]
 
 def dF(t,X,F):
     # T=m x B
