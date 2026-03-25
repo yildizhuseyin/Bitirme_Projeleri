@@ -114,7 +114,7 @@ say=0
 t0=timer.time()
 while running:
     control_current=PID_controller.apply(SIM.X[0,0]) # Kontrolcüden uygulanacak akımı hesaplat 
-    control_current=-40#*np.sin(SIM.t*2);
+    control_current=40#*np.sin(SIM.t*2);
     # print(control_current)
     bobin1.set_current(control_current)
     # bobin2.set_current(control_current)

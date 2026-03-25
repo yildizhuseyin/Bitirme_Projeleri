@@ -84,7 +84,7 @@ def dF(t,X,F):
 # %%
 
 
-t0=0; ts=1; dt=0.001
+t0=0; ts=1; dt=0.0001
 
 n=int((ts-t0)/dt)
 t=0
