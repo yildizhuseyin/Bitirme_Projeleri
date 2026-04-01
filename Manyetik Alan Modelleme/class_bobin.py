@@ -109,7 +109,7 @@ def ornek_fcn(t,X,F):
 
 
 class simulator: 
-    def __init__ (self,t0,ts,dt,X0,sim_type='RK4',islog=True):
+    def __init__ (self,t0,ts,dt,X0,sim_type='RK4',isAdd=True,islog=True):
         self.position=np.array([0.0,0.0,0.0])
         self.velocity=np.array([0.0,0.0,0.0])
         self.sim_type=sim_type
@@ -125,14 +125,19 @@ class simulator:
         self.adim=0
         self.F=None 
         self.X=np.array(X0)
+        self.X_pluss=np.ones_like(X0)
         self.dX=np.zeros_like(X0)
         self.fcn=ornek_fcn; # Fizik modeli 
         self.log_T=np.zeros([self.n+1,1])
         self.log_X=np.zeros([self.n+1,self.L])
         self.log_F=np.zeros([self.n+1,self.L])
         self.isFunction=False
+        self.isAdd=isAdd
         print(sim_type,' simulatörü oluşturuldu')
     
+    
+    def set_add_matrix(self,val):
+        self.X_pluss=val
     def set_fcn(self,fcn):
         self.fcn=fcn
     
@@ -175,16 +180,24 @@ class simulator:
             
     def apply_Euler(self,F=[]):
         self.dX=self.fcn(self.t,self.X,F)  # Euler yönteminde türev 
-        self.X=self.X+self.dX*self.dt
+        # if self.isAdd:
+        self.X=self.X*self.X_pluss+self.dX*self.dt
+        # else:
+        #     self.X=self.dX*self.dt
         #print('Euler kutta uygulandı')
         
     def apply_RK4(self,F=[]):
+        # print(self.X[0,:])
+        # print(type(self.X))
         K1=self.fcn(self.t,self.X,F)
         K2=self.fcn(self.t+self.dt/2,self.X+K1*self.dt/2,F)
         K3=self.fcn(self.t+self.dt/2,self.X+K2*self.dt/2,F)
         K4=self.fcn(self.t+self.dt,self.X+K3*self.dt,F)
         self.dX=(1/6)*(K1+2*K2+2*K3+K4) # Runge Kutta İçin 
-        self.X=self.X+K1*self.dt
+        # if self.isAdd:
+        self.X=self.X*self.X_pluss+self.dX*self.dt
+        # else:
+        #     self.X=self.dX*self.dt
         #print('Runge kutta uygulandı')
 
 

@@ -21,8 +21,8 @@ m=0.02 ; # manyetik dipol ( ?? )
 J=0.0001 # Dönme atalet momenti
 
 bobin0=bobin(a,i=10)
-bobin1=bobin(a,i=10,z0=a/2)
-bobin2=bobin(a,i=10,z0=a/2,alfa=90.0)
+bobin1=bobin(a,i=10,z0=a/2,alfa=-90.0)
+bobin2=bobin(a,i=-10,z0=a/2,alfa=90.0)
 
 
 #p=np.array([0],[0][0]) 
@@ -56,22 +56,29 @@ z=np.linspace(-W,W,m)
 
 Y2D,Z2D=np.meshgrid(y,z)
 
-B2D=np.zeros([m,n,4])
+B2D_1=np.zeros([m,n,4])
 B2D_2=np.zeros([m,n,4])
+B2D=np.zeros([m,n,4])
 
 #B=np.zeros([X2D.shape[0],X2D.shape[1],4])
 
 for j in range(m):
     for i in range(n):
-        b=bobin1.get_magnetic_field_unrotated(x,Y2D[j,i], Z2D[j,i])
-        B2D[j,i,:]=b[:]
+        #b_1=bobin1.get_magnetic_field_unrotated(x,Y2D[j,i], Z2D[j,i])
+        b_1=bobin1.get_magnetic_field_rotated(x,Y2D[j,i], Z2D[j,i])
+
+        B2D_1[j,i,:]=b_1[:]
         b_2=bobin2.get_magnetic_field_rotated(x,Y2D[j,i], Z2D[j,i])
         B2D_2[j,i,:]=b_2[:]
+        B2D[j,i,:]=B2D_1[j,i,:]+B2D_2[j,i,:]
 
+plot_surf_2D(1,131,Y2D,Z2D,B2D[:,:,3],'B')
+plot_stream_lines(1,132,Y2D,Z2D,B2D[:,:,1],B2D[:,:,2],title='stream line')
+plot_vector_2D(1,133,Y2D,Z2D,B2D[:,:,1],B2D[:,:,2],scale=1e-2,title='vector')
 
-plot_surf_2D(2,131,Y2D,Z2D,B2D[:,:,3],'B')
-plot_stream_lines(2,132,Y2D,Z2D,B2D[:,:,1],B2D[:,:,2],title='stream line')
-plot_vector_2D(2,133,Y2D,Z2D,B2D[:,:,1],B2D[:,:,2],scale=1e-2,title='vector')
+plot_surf_2D(2,131,Y2D,Z2D,B2D_1[:,:,3],'B')
+plot_stream_lines(2,132,Y2D,Z2D,B2D_1[:,:,1],B2D_1[:,:,2],title='stream line')
+plot_vector_2D(2,133,Y2D,Z2D,B2D_1[:,:,1],B2D_1[:,:,2],scale=1e-2,title='vector')
     
 plot_surf_2D(3,131,Y2D,Z2D,B2D_2[:,:,3],'B')
 plot_stream_lines(3,132,Y2D,Z2D,B2D_2[:,:,1],B2D_2[:,:,2],title='stream line')

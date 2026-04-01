@@ -94,7 +94,7 @@ SIM.set_fcn(dF)
 
 # %% KONTROLCÜ AYARLARI 
 PID_controller=PID_controller_1D(dt,y_ref=a/10) # ♠kontrolcüyü tanımla 
-PID_controller.set_parameters(kp=700) # PID parametrelerini düzenle 
+PID_controller.set_parameters(kp=100,ki=10,kd=00.01) # PID parametrelerini düzenle 
 
 
 
@@ -112,7 +112,7 @@ say=0
 t0=timer.time()
 while running:
     control_current=PID_controller.apply(SIM.X[0,0]) # Kontrolcüden uygulanacak akımı hesaplat 
-    control_current=4;
+    #control_current=4;
     # print(control_current)
     bobin.set_current(control_current)
     SIM.apply() # Simulasyonu çalıştır 

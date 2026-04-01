@@ -25,7 +25,7 @@ bobin2=bobin(a/2,i=-I,z0=-a,n=N)
 m0=0.124 # mıknatısın manyetik dipol (A*m2)
 M=0.001 # Ağırlık (kg) 
 g=0*9.81 
-b= 0.05 # sürtünme kuvveti 
+b= 0.1 # sürtünme kuvveti 
 z0=0.0;
 dz0=0.0;
 q0=0.0*np.pi/180;

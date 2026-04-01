@@ -119,5 +119,5 @@ class PID_controller_1D:
         self.de=self.e/self.dt
     
     def apply_integral(self):
-        self.I_e=0.5*(self.e+self.e_)*self.dt
+        self.I_e=self.I_e+0.5*(self.e+self.e_)*self.dt
         
