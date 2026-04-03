@@ -17,7 +17,7 @@ a=100.0/1000.0; # bobin yarıçapı (m)
 N=100.0 # Bobin sargı sayısı  
 I=1.0 # Akım (A)
 
-bobin1=bobin(a,i=I,z0=1*a/5,n=N)
+bobin1=bobin(a,i=I,z0=1*a/5,n=N,alfa=30)
 # bobin2=bobin(a,i=I,z0=-a/5,n=N)
 
 # %%  Robot Ayarları ve Tanımlama 

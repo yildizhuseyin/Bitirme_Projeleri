@@ -319,12 +319,16 @@ class pygame_screan_2D:
         self.draw_transparent_text(self.screen,"COİLS",(850,420),self.BLUE)
         for coil in self.coils:
             say=say+1
-            x=self.zero_point[0]+coil.pos[1]*self.scale[0] 
+            x=self.zero_point[0]-coil.pos[1]*self.scale[0] 
             y=self.zero_point[1]-coil.pos[2]*self.scale[1]
-            line_length = 10000*coil.a
+            line_length = 1000*coil.a
             angle=coil.alfa
-            start_point=pygame.Vector2(x-0.5*line_length*math.cos(angle),y-0.5*line_length*math.sin(angle))
+            angle2=90-angle
+            R=get_Rotx(coil.alfa)
+            start_points=np.dot(R,[0,-0.5*line_length,+coil.z0*self.scale[0]])
+            start_point=pygame.Vector2(x-0.5*line_length*math.cos(angle2*np.pi/180),y+0.5*line_length*math.sin(angle2*np.pi/180)) #-0.5*line_length*math.sin(angle*np.pi/180)
             coil_pos = pygame.Vector2(x,y)
+
             if coil.I >0: 
                 color=self.RED
             elif coil.I <0: 
@@ -338,7 +342,7 @@ class pygame_screan_2D:
                 color, 
                 start_point, 
                 line_length, 
-                angle, 
+                angle2, 
                 size=2
                 )
             str_I="coil_ "+str(say)+" : "+str(np.round(coil.I,4))+" A"
@@ -671,7 +675,7 @@ class screan_3D:
             B=B+b
         return B
     
-    def get_magnetic_gradient(self,x,y,z,h=1e-4):
+    def get_magnetic_gradient(self,x,y,z,h=1e-5):
         dB_dX=np.zeros([3,3])
         B=self.get_magnetic_fields(x,y,z)
         Bx1=self.get_magnetic_fields(x-h,y,z)

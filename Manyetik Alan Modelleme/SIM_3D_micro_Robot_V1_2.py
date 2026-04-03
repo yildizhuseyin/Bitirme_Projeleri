@@ -39,6 +39,7 @@ def get_magnetic_fields(x,y,z):
 """     
 direction_vector=np.array([0,0,1])
 # Simulasyon ayarları 
+
 def get_force(X):
     # mm=np.array([0,0,m0]) #robot.get_magnet_vector()
     # print(robot.sphare*180/np.pi)
@@ -65,7 +66,7 @@ def dF(t,X,F):
 
 
 
-tt0=0; tts=1.0; dt=0.001
+tt0=0; tts=0.5; dt=0.001
 
 # Tanımlamalar ve Ölçüler 
 # Bobin özellikleri 
@@ -183,8 +184,8 @@ Q_e=SIM.X[2,:]
 while running:
     say=say+1
     if SIM.adim % 2==0:   
-        y_ref=15*SIM.t+0.5#*np.sin(2*np.pi*SIM.t)
-        z_ref=25*SIM.t+0.5#*np.sin(2*np.pi*SIM.t)
+        y_ref=15 #*SIM.t+0.5#*np.sin(2*np.pi*SIM.t)
+        z_ref=25#*SIM.t+0.5#*np.sin(2*np.pi*SIM.t)
         #PID_controller.set_referance(y_ref)
         # Y ekseni 
         i_c_y=PID_controller1.apply_with_ref(SIM.X[0,1]*1000,y_ref) # Kontrolcüden uygulanacak akımı hesaplat 
@@ -193,7 +194,7 @@ while running:
         err_z=(z_ref-SIM.X[0,2]*1000)/30
         #i_c_y=3*
         err=np.sqrt(err_y**2+err_z**2)
-        if SIM.get_time()>0.1: 
+        if SIM.get_time()>0.0: 
             # Z EKSENİ  
             print('as')
             i_1=+30*err_z/1-00*err_y+20*err_z/err_y #255#(-err_z*150+i_c_y)*1
@@ -244,7 +245,7 @@ while running:
         
         direction_vector=aply_rotation_and_translation(direction_vector, DQ*180/np.pi)
 
-        if SIM.adim % 20==0:  
+        if SIM.adim % 5==0:  
             # ekran.delate_arrows()
             # ekran.plot_magnetic_field_vectors([-00,00,1],[-40,40,10],[-40,40,10],scale=100.0)
 

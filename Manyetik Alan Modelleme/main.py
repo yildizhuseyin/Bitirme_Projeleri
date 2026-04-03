@@ -21,8 +21,8 @@ m=0.02 ; # manyetik dipol ( ?? )
 J=0.0001 # Dönme atalet momenti
 
 bobin0=bobin(a,i=10)
-bobin1=bobin(a,i=10,z0=a/2,alfa=-90.0)
-bobin2=bobin(a,i=-10,z0=a/2,alfa=90.0)
+bobin1=bobin(a,i=10,z0=a/2,alfa=-45.0)
+bobin2=bobin(a,i=-10,z0=a/2,alfa=45.0)
 
 
 #p=np.array([0],[0][0]) 

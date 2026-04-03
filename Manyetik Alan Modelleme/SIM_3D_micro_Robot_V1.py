@@ -81,7 +81,7 @@ J=1e-8 # Robot atalet momenti
 g=np.array([0.0,0.0,0*9.81]) # Yer çekimi vektörü 
 b=[0.1,0.1,0.1] # doğrusal sürtünme katsayısı
 bq=[1e-5,1e-5,1e-5] # açısal sürtünme katsayısı 
-X0=[5/1000,0/1000,0/1000]; # Robot başlangıç konumları x,y,z 
+X0=[0/1000,0/1000,-15/1000]; # Robot başlangıç konumları x,y,z 
 dX0=[0.0,0.0,0.0]; # Robot başlangıç hızları Vx,Vy,Vz 
 Q0=[40*np.pi/180,0*np.pi/180,0*np.pi/180];# Robot başlangıç açıları alfa_x,alfa_y,alfa_z 
 dQ0=[0.0,0.0,0.0];# Robot başlangıç açısal hızları w_x,w_y,w_z 
@@ -166,7 +166,7 @@ Q_e=SIM.X[2,:]
 while running:
     say=say+1
     if SIM.adim % 2==0:   
-        yref=15*np.sin(2*np.pi*SIM.t)
+        yref=-0#*np.sin(2*np.pi*SIM.t)
         #PID_controller.set_referance(y_ref)
         i_c=PID_controller.apply_with_ref(SIM.X[0,2]*1000,yref) # Kontrolcüden uygulanacak akımı hesaplat 
         i_1=+1*250+i_c
