@@ -17,9 +17,12 @@ a=100.0/1000.0; # bobin yarıçapı (m)
 N=100.0 # Bobin sargı sayısı  
 I=1.0 # Akım (A)
 
-bobin1=bobin(a,i=I,z0=1*a/5,n=N,alfa=30)
-# bobin2=bobin(a,i=I,z0=-a/5,n=N)
+bobin1=bobin(a,i=I,z0=1*a/5,n=N,alfa=0)
+bobin2=bobin(a,i=I,z0=-1*a/5,n=N,alfa=0)
+bobin3=bobin(a,i=I,z0=1*a/5,n=N,alfa=90)
+bobin4=bobin(a,i=I,z0=-1*a/5,n=N,alfa=90)
 
+# bobin2=bobin(a,i=I,z0=-a/5,n=N)
 # %%  Robot Ayarları ve Tanımlama 
 
 m0=0.4 # mıknatısın manyetik dipol (A*m2)
@@ -29,7 +32,7 @@ g=1*9.81
 b= 0.001 # sürtünme kuvveti 
 z0=0.0;
 dz0=0.0;
-q0=30*np.pi/180;
+q0=0*np.pi/180;
 dq0=0*np.pi/180;
 
 
@@ -45,7 +48,13 @@ w=[dq0,0.0,0]
 robot.update_rotation(q,w)
 # %%
 
-
+def get_magnetic_fields_from_list(x,y,z):
+    B=np.zeros([4,])
+    for bobin in ekran.coils:
+        b=bobin.get_magnetic_field_rotated(x,y,z)
+        B=B+b
+    B[3]=np.sqrt(B[0]**2+B[1]**2+B[2]**2)
+    return B
 def get_magnet_vector(mm,tet):
     magnet_vector=[np.zeros([1,]),mm*np.sin(tet),mm*np.cos(tet)]
     return np.array(magnet_vector)
@@ -57,9 +66,9 @@ def get_force(X):
     z0=robot.X[0]
     z0a=z0-d_z
     z0b=z0+d_z
-    B=bobin1.get_magnetic_field_rotated(0.0,0.0,z0)
-    B_a=bobin1.get_magnetic_field_rotated(0.0,0.0,z0a)
-    B_b=bobin1.get_magnetic_field_rotated(0.0,0.0,z0b)
+    B=get_magnetic_fields_from_list(0.0,0.0,z0)
+    B_a=get_magnetic_fields_from_list(0.0,0.0,z0a)
+    B_b=get_magnetic_fields_from_list(0.0,0.0,z0b)
     dBz_dz=(B_b[2]-B_a[2])/(2*d_z)
     force=m0*dBz_dz
     mm=np.reshape(m,[-1,])
@@ -106,18 +115,25 @@ ekran.set_backgraun_color(bg_color) # Arka plan rengini ayarla
 ekran.set_textSize(30) # Yazı fontu büyüklüğünü ayarla 
 ekran.add_robot(robot) # Bir robot geometrisi ekle 
 ekran.add_coil(bobin1)  # Bir bobin ekle 
-# ekran.add_coil(bobin2)  # Bir bobin ekle 
+ekran.add_coil(bobin2)  # Bir bobin ekle 
+ekran.add_coil(bobin3)  # Bir bobin ekle 
+ekran.add_coil(bobin4)  # Bir bobin ekle # ekran.add_coil(bobin2)  # Bir bobin ekle 
 # %%
 
 running=True
 say=0
 t0=timer.time()
+f=2
 while running:
     control_current=PID_controller.apply(SIM.X[0,0]) # Kontrolcüden uygulanacak akımı hesaplat 
-    control_current=-40#*np.sin(SIM.t*2);
+    control_current1=40*np.sin(f*SIM.t*2);
+    control_current2=40*np.sin(f*SIM.t*2-np.pi/2);
     # print(control_current)
-    bobin1.set_current(control_current)
-    # bobin2.set_current(control_current)
+    
+    bobin1.set_current(1*control_current1)
+    bobin2.set_current(1*control_current1)
+    bobin3.set_current(1*control_current2)
+    bobin4.set_current(1*control_current2)
     SIM.apply() # Simulasyonu çalıştır 
     
     # Pozisyon bilgisi sabit 

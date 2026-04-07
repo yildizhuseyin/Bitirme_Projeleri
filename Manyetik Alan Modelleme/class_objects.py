@@ -326,7 +326,7 @@ class pygame_screan_2D:
             angle2=90-angle
             R=get_Rotx(coil.alfa)
             start_points=np.dot(R,[0,-0.5*line_length,+coil.z0*self.scale[0]])
-            start_point=pygame.Vector2(x-0.5*line_length*math.cos(angle2*np.pi/180),y+0.5*line_length*math.sin(angle2*np.pi/180)) #-0.5*line_length*math.sin(angle*np.pi/180)
+            start_point=pygame.Vector2(x-0.5*line_length*math.cos(angle*np.pi/180),y+0.5*line_length*math.sin(angle*np.pi/180)) #-0.5*line_length*math.sin(angle*np.pi/180)
             coil_pos = pygame.Vector2(x,y)
 
             if coil.I >0: 
@@ -342,7 +342,7 @@ class pygame_screan_2D:
                 color, 
                 start_point, 
                 line_length, 
-                angle2, 
+                angle, 
                 size=2
                 )
             str_I="coil_ "+str(say)+" : "+str(np.round(coil.I,4))+" A"
